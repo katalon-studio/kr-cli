@@ -33,8 +33,7 @@ const executionTestService = async function(browser, path, options) {
                     }
                 }
             } else {
-                return openBrowser(browser)
-                    // .then(() => socketExecution(dirname));
+                return openBrowser(browser).then(() => socketExecution(dirname));
             }
 
         } else {
