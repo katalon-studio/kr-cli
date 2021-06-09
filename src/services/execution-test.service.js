@@ -26,10 +26,10 @@ const executionTestService = async function(browser, path, options) {
                 if (dataMap.every(el => checkExistsFile(el.dirname)) == true && checkDataFilesinHTML(dirname, dataMap) == true) {
                     if (options.report && checkExistsFile(pathLib.resolve(options.report))) {
                         return openBrowser(browser)
-                            // .then(() => socketExecution(dirname, dataMap, options.report));
+                            .then(() => socketExecution(dirname, dataMap, options.report));
                     } else {
                         return openBrowser(browser)
-                            // .then(() => socketExecution(dirname, dataMap));
+                            .then(() => socketExecution(dirname, dataMap));
                     }
                 }
             } else {
