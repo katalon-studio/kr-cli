@@ -7,12 +7,12 @@ function encode(file) {
     const stream = require('fs').readFileSync(dirname + file);
     return Buffer.from(stream).toString('base64');
 }
+require('chromedriver');
+require('geckodriver');
+const driver = new webdriver.Builder();
 
 const openBrowser = async(browser) => {
-    require('chromedriver');
-    require('geckodriver');
-    const driver = new webdriver.Builder()
-        .forBrowser(browser);
+    driver.forBrowser(browser);
     switch (browser) {
         case 'chrome':
             {
@@ -44,6 +44,11 @@ const openBrowser = async(browser) => {
     return driver;
 };
 
+const closeBrowser = () => {
+    // return driver.quit();
+}
+
 module.exports = {
-    openBrowser
+    openBrowser,
+    closeBrowser
 }

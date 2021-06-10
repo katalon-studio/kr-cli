@@ -7,6 +7,7 @@ const path = require('path');
 const { log } = require('./handle-file.helper');
 const logger = require('./logger.helper');
 const pathLib = require('path');
+const { closeBrowser } = require('./run-browser.helpers');
 
 const app = express();
 const server = http.createServer(app);
@@ -61,7 +62,7 @@ const socketExecution = async(path, datafiles, reportDir) => {
             })
 
             if (reportResult.length === reportMap.numOfTestcases) {
-                await stringify(reportResult, {
+                stringify(reportResult, {
                     header: true
                 }, function(err, output) {
                     if (output) {
@@ -73,6 +74,8 @@ const socketExecution = async(path, datafiles, reportDir) => {
                             }
                             fs.writeFileSync(`${appRoot.split('src')[0]}report/${new Date().getTime()}_kr_execution.csv`, output.toString());
                         }
+                        closeBrowser();
+                        process.exit();
                     }
                 });
             }
