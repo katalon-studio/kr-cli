@@ -24,6 +24,7 @@ const openBrowser = async(browser) => {
                 driver.withCapabilities(webdriver.Capabilities.chrome())
                 .setChromeOptions(options)
                 .build();
+
                 break;
             }
         case 'firefox':
@@ -34,6 +35,7 @@ const openBrowser = async(browser) => {
 
                 driver.setFirefoxOptions(options)
                 .build();
+
                 break;
             }
         default:
