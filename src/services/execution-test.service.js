@@ -6,6 +6,7 @@ const {
     checkDataFilesinHTML,
     log
 } = require("../helpers/handle-file.helper");
+const fs = require("fs");
 
 const { openBrowser } = require("../helpers/run-browser.helpers");
 const { socketExecution } = require("../helpers/socket-execution.helper")
@@ -24,7 +25,12 @@ const executionTestService = async function(browser, path, options) {
                 });
 
                 if (dataMap.every(el => checkExistsFile(el.dirname)) == true && checkDataFilesinHTML(dirname, dataMap) == true) {
-                    if (options.report && checkExistsFile(pathLib.resolve(options.report))) {
+                    if (options.report) {
+                        let reportAbsDir = pathLib.resolve(`./${options.report}`);
+                        if (!checkExistsFile(reportAbsDir)){
+                            log(`Creating new folder at. ${reportAbsDir}`, true);
+                            fs.mkdirSync(reportAbsDir, { recursive: true });
+                        }
                         return openBrowser(browser)
                             .then(() => socketExecution(dirname, dataMap, options.report));
                     } else {
