@@ -7,14 +7,13 @@ const path = require('path');
 const { log } = require('./handle-file.helper');
 const logger = require('./logger.helper');
 const pathLib = require('path');
-const { closeBrowser } = require('./run-browser.helpers');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const appRoot = path.resolve(__dirname);
 
-const socketExecution = async(path, datafiles, reportDir) => {
+const socketExecution = async(driver, path, datafiles, reportDir) => {
     const fileContents = await fs.readFileSync(path, { encoding: 'utf8' }).toString();
     if (datafiles) {
         datafiles = datafiles.reduce(function(result, item) {
@@ -64,7 +63,7 @@ const socketExecution = async(path, datafiles, reportDir) => {
             if (reportResult.length === reportMap.numOfTestcases) {
                 stringify(reportResult, {
                     header: true
-                }, function(err, output) {
+                }, async function(err, output) {
                     if (output) {
                         if (reportDir) {
                             fs.writeFileSync(pathLib.resolve(`./${reportDir}/${new Date().getTime()}_kr_execution.csv`), output.toString());
@@ -74,7 +73,7 @@ const socketExecution = async(path, datafiles, reportDir) => {
                             }
                             fs.writeFileSync(`${appRoot.split('src')[0]}report/${new Date().getTime()}_kr_execution.csv`, output.toString());
                         }
-                        closeBrowser();
+                        await driver.quit();
                         process.exit();
                     }
                 });

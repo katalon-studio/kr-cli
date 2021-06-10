@@ -7,12 +7,12 @@ function encode(file) {
     const stream = require('fs').readFileSync(dirname + file);
     return Buffer.from(stream).toString('base64');
 }
-require('chromedriver');
-require('geckodriver');
-const driver = new webdriver.Builder();
 
 const openBrowser = async(browser) => {
-    driver.forBrowser(browser);
+    require('chromedriver');
+    require('geckodriver');
+    const driver = await new webdriver.Builder()
+        .forBrowser(browser);
     switch (browser) {
         case 'chrome':
             {
@@ -22,8 +22,7 @@ const openBrowser = async(browser) => {
                 options.addExtensions(encode("katalon-recorder/ljdobmomdgdljniojadhoplhkpialdid_main.crx"));
 
                 driver.withCapabilities(webdriver.Capabilities.chrome())
-                .setChromeOptions(options)
-                .build();
+                .setChromeOptions(options);
 
                 break;
             }
@@ -33,22 +32,18 @@ const openBrowser = async(browser) => {
                 const options = new firefox.Options();
                 options.addExtensions(dirname);
 
-                driver.setFirefoxOptions(options)
-                .build();
+                driver.setFirefoxOptions(options);
 
                 break;
             }
         default:
             break;
     }
-    return driver;
+    return driver.build().then(d => {
+        return d;
+    });
 };
 
-const closeBrowser = () => {
-    // return driver.quit();
-}
-
 module.exports = {
-    openBrowser,
-    closeBrowser
+    openBrowser
 }

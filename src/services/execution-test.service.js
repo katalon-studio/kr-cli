@@ -25,25 +25,21 @@ const executionTestService = async function(browser, path, options) {
                 });
 
                 if (dataMap.every(el => checkExistsFile(el.dirname)) == true && checkDataFilesinHTML(dirname, dataMap) == true) {
-                    if (options.report) {
-                        let reportAbsDir = pathLib.resolve(`./${options.report}`);
-                        if (!checkExistsFile(reportAbsDir)){
-                            log(`Creating new folder at. ${reportAbsDir}`, true);
-                            fs.mkdirSync(reportAbsDir, { recursive: true });
-                        }
+                    if (options.report && checkExistsFile(pathLib.resolve(`./${options.report}`))) {
                         return openBrowser(browser)
-                            .then(() => socketExecution(dirname, dataMap, options.report));
+                            .then((driver) => socketExecution(driver, dirname, dataMap, options.report));
                     } else {
+                        log("We will save your report in folder '/report'. Thanks!", false)
                         return openBrowser(browser)
-                            .then(() => socketExecution(dirname, dataMap));
+                            .then((driver) => socketExecution(driver, dirname, dataMap));
                     }
                 }
             } else {
-                return openBrowser(browser).then(() => socketExecution(dirname));
+                return openBrowser(browser).then((driver) => socketExecution(driver, dirname));
             }
 
         } else {
-            log("The path is not valid. Please try again!", true)
+            log("The path is not valid. Please try again!", true);
         }
     } catch (error) {
         log(`Error: ${error}`, true);
