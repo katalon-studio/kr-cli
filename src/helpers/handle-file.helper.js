@@ -47,17 +47,17 @@ const checkKRformatedFile = function(path) {
             if (body) {
                 const childrenBody = body.children.find(el => el.tagName === "body");
                 if (childrenBody.children.some(el => el.tagName && el.tagName !== "table") == true) {
-                    log(`The execution target is not a valid KR test suite or a folder that contains at least one KR test suite. No tests were executed.`, true);
+                    log(`The execution target is not a valid KR test suite or a folder that contains at least one valid KR test suite. No tests were executed.`, true);
                     return false;
                 } else {
                     return true;
                 }
             } else {
-                log(`The execution target is not a valid KR test suite or a folder that contains at least one KR test suite. No tests were executed.`, true);
+                log(`The execution target is not a valid KR test suite or a folder that contains at least one valid KR test suite. No tests were executed.`, true);
                 return false;
             }
         } else {
-            log(`The execution target is not a valid KR test suite or a folder that contains at least one KR test suite. No tests were executed.`, true);
+            log(`The execution target is not a valid KR test suite or a folder that contains at least one valid KR test suite. No tests were executed.`, true);
             return false;
         }
     } catch (error) {
@@ -87,7 +87,7 @@ const checkDataFilesinHTML = (path, datafiles) => {
         if (stringFile && datafiles.every(el => new RegExp(`${el.name}`, 'g').test(stringFile)) == true) {
             return true;
         } else {
-            log(`Some data files is invalid `, true);
+            log(`Some data files needed by the tests are missing. If your tests don't use data files, don't use parameter "data". `, true);
             return false;
         }
     } catch (error) {
