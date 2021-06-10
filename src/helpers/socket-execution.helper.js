@@ -3,15 +3,15 @@ const http = require('http');
 const { Server } = require("socket.io");
 const fs = require('fs');
 const stringify = require('csv-stringify');
-const path = require('path');
+const pathLib = require('path');
+const winston = require('winston');
+
 const { log } = require('./handle-file.helper');
 const logger = require('./logger.helper');
-const pathLib = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-const appRoot = path.resolve(__dirname);
 
 const socketExecution = async(driver, path, datafiles, reportDir) => {
     const fileContents = await fs.readFileSync(path, { encoding: 'utf8' }).toString();
@@ -27,6 +27,7 @@ const socketExecution = async(driver, path, datafiles, reportDir) => {
 
     let reportMap = {};
     let reportResult = [];
+    let UUI = new Date().getTime();
 
     io.on('connection', (socket) => {
         socket.emit('sendHtml', {
@@ -36,9 +37,10 @@ const socketExecution = async(driver, path, datafiles, reportDir) => {
         //logger show in terminal
         socket.on("logger", (data) => {
             if (data.type === "error") {
-                logger.error(data.mess)
+                logger(pathLib.resolve(`./${reportDir}/${UUI}`)).error(data.mess);
+
             } else {
-                logger.info(data.mess)
+                logger(pathLib.resolve(`./${reportDir}/${UUI}`)).info(data.mess)
             }
         });
         //info testsuite and testcases
@@ -66,12 +68,7 @@ const socketExecution = async(driver, path, datafiles, reportDir) => {
                 }, async function(err, output) {
                     if (output) {
                         if (reportDir) {
-                            fs.writeFileSync(pathLib.resolve(`./${reportDir}/${new Date().getTime()}_kr_execution.csv`), output.toString());
-                        } else {
-                            if (!fs.existsSync(`${appRoot.split('src')[0]}report`)) {
-                                fs.mkdirSync(`${appRoot.split('src')[0]}report`);
-                            }
-                            fs.writeFileSync(`${appRoot.split('src')[0]}report/${new Date().getTime()}_kr_execution.csv`, output.toString());
+                            fs.writeFileSync(pathLib.resolve(`./${reportDir}/${UUI}/kr_execution.csv`), output.toString());
                         }
                         await driver.quit();
                         process.exit();

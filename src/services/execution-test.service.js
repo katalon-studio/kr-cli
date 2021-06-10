@@ -6,38 +6,35 @@ const {
     checkDataFilesinHTML,
     log
 } = require("../helpers/handle-file.helper");
-const fs = require("fs");
 
 const { openBrowser } = require("../helpers/run-browser.helpers");
 const { socketExecution } = require("../helpers/socket-execution.helper")
 
 const executionTestService = async function(browser, path, options) {
-    let dirname = `${appRoot.split('src')[0]}${browser}/${path}`;
+    let dirname = pathLib.resolve(`./${path}`);
 
     try {
         if (checkExistsFile(dirname) && checkFormatedFile(dirname) && checkKRformatedFile(dirname)) {
             if (options.data) {
-                let dataMap = options.data.split(',').map(el => {
-                    return {
-                        name: el,
-                        dirname: `${appRoot.split('src')[0]}datafiles/${el}`
-                    };
-                });
+                if (options.report && checkExistsFile(pathLib.resolve(`./${options.report}`))) {
+                    let dataMap = options.data.split(',').map(el => {
+                        return {
+                            name: el.split('/').pop(),
+                            dirname: pathLib.resolve(`./${el}`)
+                        };
+                    });
 
-                if (dataMap.every(el => checkExistsFile(el.dirname)) == true && checkDataFilesinHTML(dirname, dataMap) == true) {
-                    if (options.report && checkExistsFile(pathLib.resolve(`./${options.report}`))) {
+                    if (dataMap.every(el => checkExistsFile(el.dirname)) == true && checkDataFilesinHTML(dirname, dataMap) == true) {
                         return openBrowser(browser)
                             .then((driver) => socketExecution(driver, dirname, dataMap, options.report));
                     } else {
-                        log("We will save your report in folder '/report'. Thanks!", false)
                         return openBrowser(browser)
-                            .then((driver) => socketExecution(driver, dirname, dataMap));
+                            .then((driver) => socketExecution(driver, dirname, undefined, options.report));
                     }
                 }
             } else {
-                return openBrowser(browser).then((driver) => socketExecution(driver, dirname));
+                log("The path of ReportLog is not valid. Please try again!", true);
             }
-
         } else {
             log("The path is not valid. Please try again!", true);
         }
