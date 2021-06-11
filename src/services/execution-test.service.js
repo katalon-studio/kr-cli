@@ -15,8 +15,8 @@ const executionTestService = async function(browser, path, options) {
         if (browser && path) {
             let dirname = pathLib.resolve(`./${path}`);
             if (checkExistsFile(dirname) && checkFormatedFile(dirname) && checkKRformatedFile(dirname)) {
-                if (options.data) {
-                    if (options.report && checkExistsFile(pathLib.resolve(`./${options.report}`))) {
+                if (options.report && checkExistsFile(pathLib.resolve(`./${options.report}`))) {
+                    if (options.data) {
                         let dataMap = options.data.split(',').map(el => {
                             return {
                                 name: el.split('/').pop(),
@@ -27,13 +27,13 @@ const executionTestService = async function(browser, path, options) {
                         if (dataMap.every(el => checkExistsFile(el.dirname)) == true && checkDataFilesinHTML(dirname, dataMap) == true) {
                             return openBrowser(browser)
                                 .then((driver) => socketExecution(driver, dirname, dataMap, options.report));
-                        } else {
-                            return openBrowser(browser)
-                                .then((driver) => socketExecution(driver, dirname, undefined, options.report));
                         }
+                    } else {
+                        return openBrowser(browser)
+                            .then((driver) => socketExecution(driver, dirname, undefined, options.report));
                     }
                 } else {
-                    log("The path of ReportLog is not valid. Please try again!", true);
+                    log("The path of ReportLog is not valid. Please try again!" + pathLib.resolve(`./${options.report}`), true);
                 }
             } else {
                 log("The path is not valid. Please try again!", true);
