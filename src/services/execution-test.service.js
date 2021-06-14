@@ -12,7 +12,6 @@ const { openBrowser } = require("../helpers/run-browser.helpers");
 const { socketExecution } = require("../helpers/socket-execution.helper")
 
 const executionTestService = async function(browser, path, options) {
-    console.log('hello')
     try {
         if (browser && path) {
             let dirname = checkPathFrom(path);
