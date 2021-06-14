@@ -4,36 +4,38 @@ const {
     checkFormatedFile,
     checkKRformatedFile,
     checkDataFilesinHTML,
-    log
+    log,
+    checkPathFrom
 } = require("../helpers/handle-file.helper");
 
 const { openBrowser } = require("../helpers/run-browser.helpers");
 const { socketExecution } = require("../helpers/socket-execution.helper")
 
 const executionTestService = async function(browser, path, options) {
+    console.log('hello')
     try {
         if (browser && path) {
-            let dirname = pathLib.resolve(`./${path}`);
+            let dirname = checkPathFrom(path);
             if (checkExistsFile(dirname) && checkFormatedFile(dirname) && checkKRformatedFile(dirname)) {
-                if (options.report && checkExistsFile(pathLib.resolve(`./${options.report}`))) {
+                if (options.report && checkExistsFile(checkPathFrom(options.report))) {
                     if (options.data) {
                         let dataMap = options.data.split(',').map(el => {
                             return {
                                 name: el.split('/').pop(),
-                                dirname: pathLib.resolve(`./${el}`)
+                                dirname: checkPathFrom(el)
                             };
                         });
 
                         if (dataMap.every(el => checkExistsFile(el.dirname)) == true && checkDataFilesinHTML(dirname, dataMap) == true) {
                             return openBrowser(browser)
-                                .then((driver) => socketExecution(driver, dirname, dataMap, options.report));
+                                .then((driver) => socketExecution(driver, dirname, dataMap, checkPathFrom(options.report)));
                         }
                     } else {
                         return openBrowser(browser)
-                            .then((driver) => socketExecution(driver, dirname, undefined, options.report));
+                            .then((driver) => socketExecution(driver, dirname, undefined, checkPathFrom(options.report)));
                     }
                 } else {
-                    log("The path of ReportLog is not valid. Please try again!" + pathLib.resolve(`./${options.report}`), true);
+                    log("The path of ReportLog is not valid. Please try again!" + checkPathFrom(options.report), true);
                 }
             } else {
                 log("The path is not valid. Please try again!", true);

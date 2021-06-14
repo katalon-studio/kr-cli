@@ -10,9 +10,18 @@ const log = function(content, isError) {
     }
 }
 
+const checkPathFrom = function(path) {
+    console.log(path.includes(pathLib.resolve('./')));
+    if (!path.includes(pathLib.resolve('./'))) {
+        return pathLib.resolve(`./${path}`)
+    } else {
+        return path;
+    }
+}
+
 const checkExistsFile = function(path) {
     try {
-        if (fs.existsSync(pathLib.resolve(path))) {
+        if (fs.existsSync(path)) {
             return true;
         } else {
             log(`The path doesn't exists. ${path}`, true);
@@ -102,5 +111,6 @@ module.exports = {
     checkKRformatedFile,
     checkDataFilesinHTML,
     convertHTMLtoJSON,
-    log
+    log,
+    checkPathFrom
 }

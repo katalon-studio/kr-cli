@@ -37,10 +37,10 @@ const socketExecution = async(driver, path, datafiles, reportDir) => {
         //logger show in terminal
         socket.on("logger", (data) => {
             if (data.type === "error") {
-                logger(pathLib.resolve(`./${reportDir}/${UUI}`)).error(data.mess);
+                logger(`${reportDir}/${UUI}`).error(data.mess);
 
             } else {
-                logger(pathLib.resolve(`./${reportDir}/${UUI}`)).info(data.mess)
+                logger(`${reportDir}/${UUI}`).info(data.mess)
             }
         });
         //info testsuite and testcases
@@ -68,7 +68,7 @@ const socketExecution = async(driver, path, datafiles, reportDir) => {
                 }, async function(err, output) {
                     if (output) {
                         if (reportDir) {
-                            fs.writeFileSync(pathLib.resolve(`./${reportDir}/${UUI}/kr_execution.csv`), output.toString());
+                            fs.writeFileSync(`${reportDir}/${UUI}/kr_execution.csv`, output.toString());
                         }
                         await driver.quit();
                         process.exit();
