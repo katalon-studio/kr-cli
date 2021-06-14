@@ -11,8 +11,10 @@ const log = function(content, isError) {
 }
 
 const checkPathFrom = function(path) {
-    console.log(path.includes(pathLib.resolve('./')));
-    if (!path.includes(pathLib.resolve('./'))) {
+    let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('./').split('\\');
+    let pathMap = path.split('/') || path.split('\\');
+    let intersection = pathMap.filter(x => dirnameMap.includes(x));
+    if (intersection.length < 2) {
         return pathLib.resolve(`./${path}`)
     } else {
         return path;
