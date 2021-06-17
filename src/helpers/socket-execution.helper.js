@@ -57,7 +57,6 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
     }
 
     io.on('connection', (socket) => {
-
         //send HTML
         sendHTML(socket, true, 0)
 
@@ -82,15 +81,14 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
 
         //result of execution
         socket.on("result", async(data) => {
-            await reportMap.forEach(el => {
-                el.testCases.forEach(e => {
-                    if (e == data.testcase)
-                        reportResult.push({
-                            'Test Suite': el.testSuite,
-                            'Test Case': e,
-                            'Status': data.result
-                        });
-                })
+            await reportMap[index].testCases.forEach(e => {
+                if (e === data.testcase) {
+                    reportResult.push({
+                        'Test Suite': reportMap[index].testSuite,
+                        'Test Case': e,
+                        'Status': data.result
+                    });
+                }
             })
         });
 
@@ -105,7 +103,7 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
                     rs = rs + el.numOfTestcases;
                     return rs;
                 }, 0);
-
+                console.log(reportResult, numbOfAllTests)
                 if (reportResult.length === numbOfAllTests) {
                     stringify(reportResult, {
                         header: true
