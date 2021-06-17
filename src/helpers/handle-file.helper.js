@@ -10,14 +10,38 @@ const log = function(content, isError) {
     }
 }
 
-const checkPathFrom = function(path) {
-    let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('./').split('\\');
-    let pathMap = path.split('/') || path.split('\\');
-    let intersection = pathMap.filter(x => dirnameMap.includes(x));
-    if (intersection.length < 2) {
-        return pathLib.resolve(`./${path}`)
-    } else {
-        return path;
+const getFiles = function(path) {
+    try {
+        let stats = fs.statSync(path);
+
+        if (stats.isFile()) {
+            return [path];
+        }
+
+        if (stats.isDirectory()) {
+            let filenames = fs.readdirSync(path);
+            let pathMap = filenames.map(e => `${path}/${e}`);
+            return pathMap;
+        }
+    } catch (error) {
+        log(`Error: ${error}`, true);
+        throw error;
+    }
+}
+
+const getPath = function(path) {
+    try {
+        let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('./').split('\\');
+        let pathMap = path.split('/') || path.split('\\');
+        let intersection = pathMap.filter(x => dirnameMap.includes(x));
+        if (intersection.length < 2) {
+            return pathLib.resolve(`./${path}`)
+        } else {
+            return path;
+        }
+    } catch (error) {
+        log(`Error: ${error}`, true);
+        throw error;
     }
 }
 
@@ -114,5 +138,6 @@ module.exports = {
     checkDataFilesinHTML,
     convertHTMLtoJSON,
     log,
-    checkPathFrom
+    getPath,
+    getFiles
 }

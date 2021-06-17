@@ -19,6 +19,7 @@ const openBrowser = async(browser) => {
                 const options = new chrome.Options();
                 options.addArguments("disable-infobars");
                 options.addArguments("start-maximized");
+                options.addArguments("--enable-automation");
                 options.addExtensions(encode("katalon-recorder/ljdobmomdgdljniojadhoplhkpialdid_main.crx"));
 
                 driver.withCapabilities(webdriver.Capabilities.chrome())
@@ -31,6 +32,7 @@ const openBrowser = async(browser) => {
                 const dirname = appRoot.split('src')[0] + "katalon-recorder/Archive.zip";
                 const options = new firefox.Options();
                 options.addExtensions(dirname);
+                options.setPreference(marionette.enabled);
 
                 driver.setFirefoxOptions(options);
 
