@@ -103,7 +103,7 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
                     rs = rs + el.numOfTestcases;
                     return rs;
                 }, 0);
-                console.log(reportResult, numbOfAllTests)
+
                 if (reportResult.length === numbOfAllTests) {
                     stringify(reportResult, {
                         header: true
