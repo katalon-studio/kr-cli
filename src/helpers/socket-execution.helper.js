@@ -30,7 +30,6 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
             return result;
         }, {})
     }
-
     let reportMap = [];
     let reportResult = [];
     let UUI = new Date().getTime();
@@ -93,6 +92,10 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
                         });
                 })
             })
+        });
+
+
+        socket.on("doneSuite", async(data) =>{
             index++;
             if (index <= fileContents.length - 1) {
                 sendHTML(socket, true, index);
@@ -118,7 +121,7 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
                     });
                 }
             }, 500);
-        });
+        })
 
         //disconnect
         socket.on("manual-disconnection", async function(data) {
