@@ -20,7 +20,7 @@ const openBrowser = async(browser) => {
                 options.addArguments("disable-infobars");
                 options.addArguments("start-maximized");
                 options.addArguments("--enable-automation");
-                options.addExtensions(encode("katalon-recorder/ljdobmomdgdljniojadhoplhkpialdid_main.crx"));
+                options.addExtensions(encode("katalon-recorder/kr-chrome.crx"));
 
                 driver.withCapabilities(webdriver.Capabilities.chrome())
                 .setChromeOptions(options);
@@ -29,7 +29,7 @@ const openBrowser = async(browser) => {
             }
         case 'firefox':
             {
-                const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-cli-firefox.xpi";
+                const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-firefox.xpi";
                 const options = new firefox.Options();
                 options.addExtensions(dirname);
                 // options.setPreference("marionette", true);
