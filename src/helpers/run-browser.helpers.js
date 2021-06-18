@@ -29,11 +29,10 @@ const openBrowser = async(browser) => {
             }
         case 'firefox':
             {
-                const dirname = appRoot.split('src')[0] + "katalon-recorder/Archive.zip";
+                const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-cli-firefox.xpi";
                 const options = new firefox.Options();
                 options.addExtensions(dirname);
-                options.setPreference(marionette.enabled);
-
+                // options.setPreference("marionette", true);
                 driver.setFirefoxOptions(options);
 
                 break;
