@@ -67,7 +67,7 @@ const executionJob = async function(browser, path, options) {
             if (files) {
                 let filesMap = await getCheckedFiles(files, undefined);
 
-                if (filesMap) {
+                if (filesMap && filesMap.length > 0) {
                     if (options.report && checkExistsFile(getPath(options.report))) {
                         if (options.data) {
                             let dataMap = options.data.split(',').map(el => {
@@ -95,7 +95,7 @@ const executionJob = async function(browser, path, options) {
                         log("The path of ReportLog is not valid. Please try again!" + getPath(options.report), true);
                     }
                 } else {
-                    log("The path is not valid. Please try again!", true);
+                    log(`The execution target must be a HTML file or a folder that contains at least one HTML file.`, true);
                 }
             } else {
                 log("The path is not valid. Please try again!", true);
@@ -112,7 +112,7 @@ const executionJob = async function(browser, path, options) {
 
 const executionDevJob = async function(browser, options) {
     try {
-        let dirname = getPath(pathLib.resolve('./tests/kr-sample-project'));
+        let dirname = getPath(pathLib.resolve('./tests/kr-test'));
         if (checkExistsFile(dirname)) {
             let files = getFiles(dirname);
 
@@ -136,7 +136,7 @@ const executionDevJob = async function(browser, options) {
                             .then((driver) => socketExecution(driver, filesMap, undefined, undefined, options.verbose ? options.verbose : false));
                     }
                 } else {
-                    log("The path is not valid. Please try again!", true);
+                    log(`The execution target must be a HTML file or a folder that contains at least one HTML file.`, true);
                 }
             } else {
                 log("The path is not valid. Please try again!", true);
