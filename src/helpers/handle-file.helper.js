@@ -119,7 +119,7 @@ const convertHTMLtoJSON = (path) => {
 const checkDataFilesinHTML = (path, datafiles) => {
     try {
         const stringFile = fs.readFileSync(path, { encoding: 'utf8' }).toString();
-        if (stringFile && datafiles.every(el => new RegExp(`${el.name}`, 'g').test(stringFile)) == true) {
+        if (stringFile && datafiles.some(el => new RegExp(`${el.name}`, 'g').test(stringFile)) == true) {
             return true;
         } else {
             log(`Some data files needed by the tests are missing. If your tests don't use data files, don't use parameter "data". `, true);
