@@ -1,3 +1,4 @@
+const pathLib = require('path')
 const {
     checkExistsFile,
     checkFormatedFile,
@@ -11,7 +12,7 @@ const {
 const { openBrowser } = require("../helpers/run-browser.helpers");
 const { socketExecution } = require("../helpers/socket-execution.helper");
 
-function getCheckedFiles(files, datafiles, checkfunc) {
+function getCheckedFiles(files, datafiles) {
     try {
         let filesMap = files.map(e => {
             let rs;
@@ -56,12 +57,12 @@ const executionJob = async function(browser, path, options) {
                                 let finalFiles = await getCheckedFiles(files, dataMap);
                                 if (finalFiles) {
                                     return openBrowser(browser)
-                                        .then((driver) => socketExecution(driver, finalFiles, dataMap, getPath(options.report)));
+                                        .then((driver) => socketExecution(driver, finalFiles, dataMap, getPath(options.report), true));
                                 }
                             }
                         } else {
                             return openBrowser(browser)
-                                .then((driver) => socketExecution(driver, filesMap, undefined, getPath(options.report)));
+                                .then((driver) => socketExecution(driver, filesMap, undefined, getPath(options.report), true));
                         }
                     } else {
                         log("The path of ReportLog is not valid. Please try again!" + getPath(options.report), true);
@@ -82,6 +83,34 @@ const executionJob = async function(browser, path, options) {
     }
 }
 
+const executionDevJob = async function(browser, options) {
+    try {
+
+        let dirname = getPath(pathLib.resolve('./test/kr-test'));
+        if (checkExistsFile(dirname)) {
+            let files = getFiles(dirname);
+            if (files) {
+                let filesMap = await getCheckedFiles(files, undefined);
+                if (filesMap) {
+                    return openBrowser(browser)
+                        .then((driver) => socketExecution(driver, filesMap, undefined, undefined, options.verbose ? options.verbose : false));
+                } else {
+                    log("The path is not valid. Please try again!", true);
+                }
+            } else {
+                log("The path is not valid. Please try again!", true);
+            }
+        } else {
+            log("The path is not valid. Please try again!", true);
+        }
+
+    } catch (error) {
+        log(`Error: ${ error }`, true);
+        throw error;
+    }
+}
+
 module.exports = {
-    executionJob
+    executionJob,
+    executionDevJob
 }

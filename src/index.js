@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const program = require("commander");
-const { executionTestController } = require("./controllers/execution-test.controller");
+const { executionTestController, executionTestDevController } = require("./controllers/execution-test.controller");
 const path = require('path');
 global.appRoot = path.resolve(__dirname);
 
@@ -15,5 +15,12 @@ program
     .description('Run test suite')
     .action((browser, path, options) => executionTestController(browser, path, options))
 
-
+program
+    .command('dev <browser>')
+    // .option('-p , --path [path]', 'specified path')
+    // .option('-d , --data [dataFiles]', 'data files')
+    .option('-v , --verbose', 'verbose')
+    .alias('-r')
+    .description('Run test suite in development')
+    .action((browser, options) => executionTestDevController(browser, options))
 program.parse(process.argv)

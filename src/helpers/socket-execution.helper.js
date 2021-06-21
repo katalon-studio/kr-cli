@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require("socket.io");
 const fs = require('fs');
 const stringify = require('csv-stringify');
+const { Table } = require('console-table-printer');
 
 const { log } = require('./handle-file.helper');
 const logger = require('./logger.helper');
@@ -11,7 +12,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const socketExecution = async(driver, files, datafiles, reportDir) => {
+const socketExecution = async(driver, files, datafiles, reportDir, verbose) => {
     const fileContents = await files.map(el => {
         let rs = {
             content: fs.readFileSync(el.path, { encoding: 'utf8' }).toString(),
@@ -32,7 +33,7 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
     }
     let reportMap = [];
     let reportResult = [];
-    let UUI = new Date().getTime();
+    let reportPath = reportDir ? `${reportDir}/${new Date().getTime()}` : undefined;
     let index = 0;
 
     function sendHTML(socket, doneTestCase, ind) {
@@ -56,19 +57,52 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
         }
     }
 
+    function printTableResult(arr, prop) {
+        const p = new Table();
+        arr.forEach(el => {
+            if (el[prop] === 'passed') {
+                el[prop] = el[prop].toUpperCase();
+                p.addRow({...el }, { color: 'green' });
+            } else {
+                el[prop] = el[prop].toUpperCase();
+                p.addRow({...el }, { color: 'red' });
+            }
+        });
+        log('Report:', false)
+        p.printTable();
+    }
+
     io.on('connection', (socket) => {
         //send HTML
         sendHTML(socket, true, 0)
 
-        //logger show in terminal
-        socket.on("logger", (data) => {
-            if (data.type === "error") {
-                logger(`${reportDir}/${UUI}`).error(data.mess);
-
-            } else {
-                logger(`${reportDir}/${UUI}`).info(data.mess)
-            }
-        });
+        //logger show in cli
+        if (verbose) {
+            socket.on("logger", (data) => {
+                switch (data.type) {
+                    case 'error':
+                        {
+                            logger(reportPath).error(data.mess);
+                            break;
+                        }
+                    case 'debug':
+                        {
+                            logger(reportPath).debug(data.mess);
+                            break;
+                        }
+                    case 'verbose':
+                        {
+                            logger(reportPath).verbose(data.mess);
+                            break;
+                        }
+                    default:
+                        {
+                            logger(reportPath).info(data.mess)
+                            break;
+                        }
+                }
+            });
+        }
 
         //info testsuite and testcases
         socket.on("infoTestSuite", (data) => {
@@ -81,15 +115,17 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
 
         //result of execution
         socket.on("result", async(data) => {
-            await reportMap[index].testCases.forEach(e => {
-                if (e === data.testcase) {
-                    reportResult.push({
-                        'Test Suite': reportMap[index].testSuite,
-                        'Test Case': e,
-                        'Status': data.result
-                    });
-                }
-            })
+            if (reportMap[index]) {
+                await reportMap[index].testCases.forEach(e => {
+                    if (e === data.testcase) {
+                        reportResult.push({
+                            'Test Suite': reportMap[index].testSuite,
+                            'Test Case': e,
+                            'Status': data.result
+                        });
+                    }
+                })
+            }
         });
 
         socket.on("doneSuite", async(data) => {
@@ -98,26 +134,36 @@ const socketExecution = async(driver, files, datafiles, reportDir) => {
                 sendHTML(socket, true, index);
             }
 
-            setTimeout(() => {
+            setTimeout(async() => {
                 let numbOfAllTests = reportMap.reduce((rs, el) => {
                     rs = rs + el.numOfTestcases;
                     return rs;
                 }, 0);
 
                 if (reportResult.length === numbOfAllTests) {
-                    stringify(reportResult, {
-                        header: true
-                    }, async function(err, output) {
-                        if (output) {
-                            if (reportDir) {
-                                fs.writeFileSync(`${reportDir}/${UUI}/kr_execution.csv`, output.toString());
+                    if (verbose) {
+                        stringify(reportResult, {
+                            header: true
+                        }, async function(err, output) {
+                            if (output) {
+                                if (reportDir) {
+                                    fs.writeFileSync(`${reportPath}/kr_execution.csv`, output.toString());
+                                } else {
+                                    printTableResult(reportResult, 'Status');
+                                }
+                                await driver.quit();
+                                process.exit();
                             }
-                            await driver.quit();
-                            process.exit();
-                        }
-                    });
+                        });
+                    } else {
+                        printTableResult(reportResult, 'Status');
+                        await driver.quit();
+                        process.exit();
+                    }
                 }
             }, 500);
+
+
         })
 
         //disconnect
