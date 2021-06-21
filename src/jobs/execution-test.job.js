@@ -86,7 +86,7 @@ const executionJob = async function(browser, path, options) {
 const executionDevJob = async function(browser, options) {
     try {
 
-        let dirname = getPath(pathLib.resolve('./test/kr-test'));
+        let dirname = getPath(pathLib.resolve('./tests/kr-sample-project'));
         if (checkExistsFile(dirname)) {
             let files = getFiles(dirname);
             if (files) {

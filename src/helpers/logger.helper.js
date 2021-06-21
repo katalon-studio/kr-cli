@@ -5,7 +5,7 @@ function filename(dirname) {
     if (dirname) {
         return { filename: path.join(dirname, `kr_execution.log`) };
     } else {
-        return { filename: path.join(path.resolve('./test/log'), 'kr_execution.log') }
+        return { filename: path.join(path.resolve('./tests/log'), `${new Date().getTime()}.log`) }
     }
 }
 
