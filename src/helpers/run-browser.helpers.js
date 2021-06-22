@@ -32,9 +32,9 @@ const openBrowser = async(browser) => {
                 const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-firefox.xpi";
                 const options = new firefox.Options();
                 options.addExtensions(dirname);
-                // options.setPreference("marionette", true);
-                driver.setFirefoxOptions(options);
+                options.setPreference("marionette.enabled", true);
 
+                driver.setFirefoxOptions(options);
                 break;
             }
         default:
