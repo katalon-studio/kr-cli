@@ -127,13 +127,13 @@ const executionDevJob = async function(browser, options) {
 
                         if (finalFiles && finalFiles.length > 0) {
                             return openBrowser(browser)
-                                .then((driver) => socketExecution(driver, finalFiles, dataMap, undefined, options.verbose ? options.verbose : false));
+                                .then((driver) => socketExecution(driver, finalFiles, dataMap, undefined, options.logger ? options.logger : false));
                         } else {
                             log("The files is not valid. Please try again!", true);
                         }
                     } else {
                         return openBrowser(browser)
-                            .then((driver) => socketExecution(driver, filesMap, undefined, undefined, options.verbose ? options.verbose : false));
+                            .then((driver) => socketExecution(driver, filesMap, undefined, undefined, options.logger ? options.logger : false));
                     }
                 } else {
                     log(`The execution target must be a HTML file or a folder that contains at least one HTML file.`, true);

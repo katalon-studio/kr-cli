@@ -19,7 +19,7 @@ program
     .command('dev <browser>')
     // .option('-p , --path [path]', 'specified path')
     // .option('-d , --data [dataFiles]', 'data files')
-    .option('-v , --verbose', 'verbose')
+    .option('-lg , --logger', 'logger')
     .alias('-dev')
     .description('Run test suite in development')
     .action((browser, options) => executionTestDevController(browser, options))
