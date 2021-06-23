@@ -65,7 +65,6 @@ const checkFormatedFile = function(path) {
         if (formatting === "html") {
             return true;
         } else {
-            log(`The execution target must be a HTML file or a folder that contains at least one HTML file.`, true);
             return false;
         }
     } catch (error) {
