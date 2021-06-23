@@ -1,5 +1,5 @@
 {
-    "name": "Katalon-recorder-cli",
+    "name": "katalon-recorder-cli",
     "version": "1.0.0",
     "description": "",
     "main": "src/index.js",
