@@ -1,0 +1,9 @@
+node_modules
+.vscode
+log
+chrome
+firefox
+datafiles
+report
+.DS_Store
+tests
