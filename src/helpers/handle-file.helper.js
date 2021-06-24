@@ -121,7 +121,7 @@ const checkDataFilesinHTML = (path, datafiles) => {
         if (stringFile && datafiles.some(el => new RegExp(`${el.name}`, 'g').test(stringFile)) == true) {
             return true;
         } else {
-            log(`Some data files needed by the tests are missing. If your tests don't use data files, don't use parameter "data". `, true);
+            log(`Some data files needed by the tests with path ${path} are missing. If your tests don't use data files, don't use parameter "data". `, true);
             return false;
         }
     } catch (error) {
