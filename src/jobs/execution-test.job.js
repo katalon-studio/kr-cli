@@ -60,7 +60,6 @@ function getDataFiles(files) {
 }
 
 const executionJob = async function(browser, path, options) {
-    console.log(options)
     try {
         let dirname = getPath(path);
         if (checkExistsFile(dirname)) {
