@@ -60,14 +60,15 @@ function getDataFiles(files) {
 }
 
 const executionJob = async function(browser, path, options) {
+    console.log(options)
     try {
         let dirname = getPath(path);
         if (checkExistsFile(dirname)) {
             let files = getFiles(dirname);
-            console.log(files)
+
             if (files) {
                 let filesMap = await getCheckedFiles(files, undefined);
-                console.log(filesMap)
+
                 if (filesMap && filesMap.length > 0) {
                     if (options.report && checkExistsFile(getPath(options.report))) {
                         if (options.data) {
