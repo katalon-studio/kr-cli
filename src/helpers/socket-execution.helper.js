@@ -162,8 +162,6 @@ const socketExecution = async(driver, files, datafiles, reportDir, verbose) => {
                     }
                 }
             }, 1000);
-
-
         })
 
         //disconnect
