@@ -131,6 +131,7 @@ const socketExecution = async(driver, files, datafiles, reportDir, verbose) => {
         socket.on("doneSuite", async(data) => {
             index++;
             if (index <= fileContents.length - 1) {
+                console.log(index)
                 sendHTML(socket, true, index);
             }
 
