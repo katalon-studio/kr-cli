@@ -36,7 +36,7 @@ If you are a tester, you can integrate KR tests into the CI/CD pipeline to execu
 
 ### Executing a test suite
 
-`kr-cli run <browser> <pathToHtmlFile> --report=<pathToReportFolder>`
+`kr-cli run <browser> <pathToHtmlFile> --report <pathToReportFolder>`
 
 1.  Replace pathToHtmlFile with the absolute path to your KR test suite.    
 2.  Replace browser with either chrome or firefox.    
@@ -48,7 +48,7 @@ A report file with .csv extension and a log file with .log extension will be gen
 
 ### Executing a test suite with data files
 
-`kr-cli run <browser> <pathToHtmlFile> --report=<pathToReportFolder> --data=<pathToData1>`
+`kr-cli run <browser> <pathToHtmlFile> --report <pathToReportFolder> --data <pathToData1>`
 
 1.  Replace pathToHtmlFile with the absolute path to your KR test suite.    
 2.  Replace browser with either chrome or firefox.    
