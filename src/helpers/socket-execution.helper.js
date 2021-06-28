@@ -109,7 +109,7 @@ const socketExecution = async(driver, files, datafiles, reportDir, verbose) => {
             reportMap.push({
                 ...data,
                 numOfTestcases: data.testCases.length,
-                executedAt: new Date()
+                executedAt: new Date().getTime()
             });
         });
 
@@ -161,7 +161,7 @@ const socketExecution = async(driver, files, datafiles, reportDir, verbose) => {
                         process.exit();
                     }
                 }
-            }, 1000);
+            }, 500);
         })
 
         //disconnect

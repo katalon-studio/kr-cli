@@ -31,13 +31,17 @@ const getFiles = function(path) {
 
 const getPath = function(path) {
     try {
-        let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('./').split('\\');
-        let pathMap = path.split('/') || path.split('\\');
-        let intersection = pathMap.filter(x => dirnameMap.includes(x));
-        if (intersection.length < 2) {
-            return pathLib.resolve(`./${path}`)
+        if (path) {
+            let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('\\').split('\\');
+            let pathMap = path.split('/') || path.split('\\');
+            let intersection = pathMap.filter(x => dirnameMap.includes(x));
+            if (intersection.length < 2) {
+                return pathLib.resolve(`./${path}`)
+            } else {
+                return path;
+            }
         } else {
-            return path;
+            return undefined;
         }
     } catch (error) {
         log(`Error: ${error}`, true);
