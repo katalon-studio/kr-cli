@@ -17,8 +17,6 @@ const openBrowser = async(browser) => {
         case 'chrome':
             {
                 const options = new chrome.Options();
-                options.addArguments("disable-infobars");
-                options.addArguments("start-maximized");
                 options.addArguments("--enable-automation");
                 options.addExtensions(encode("katalon-recorder/kr-chrome.crx"));
 
@@ -31,10 +29,12 @@ const openBrowser = async(browser) => {
             {
                 const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-firefox.xpi";
                 const options = new firefox.Options();
-                options.addExtensions(dirname);
                 options.setPreference("marionette.enabled", true);
+                options.addExtensions(dirname);
 
-                driver.setFirefoxOptions(options);
+
+                driver.withCapabilities(webdriver.Capabilities.firefox())
+                .setFirefoxOptions(options);
                 break;
             }
         default:
