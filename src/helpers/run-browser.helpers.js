@@ -30,6 +30,7 @@ const openBrowser = async(browser) => {
                 const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-firefox.xpi";
                 const options = new firefox.Options();
                 options.setPreference("marionette.enabled", true);
+                options.setPreference("security.csp.enable", false)
                 options.addExtensions(dirname);
 
 
