@@ -127,8 +127,6 @@ const checkDataFilesinHTML = (path, datafiles) => {
                 return true;
             } else {
                 if (new RegExp('.csv|.json', 'g').test(stringFile) == true) {
-                    log(`Some data files is found with path ${path}!`, false)
-                } else {
                     log(`Some data files needed by the tests with path ${path} are missing. If your tests don't use data files, don't use parameter "data". `, true);
                 }
                 return false;
