@@ -21,7 +21,7 @@ function getCheckedFiles(files, datafiles) {
                 if (checkFormatedFile(e) && checkKRformatedFile(e)) {
                     rs = {
                         path: e,
-                        hasData: false
+                        hasData: checkDataFilesinHTML(e)
                     };
                 }
             } else {
@@ -62,6 +62,7 @@ function getDataFiles(files) {
 const executionJob = async function(browser, path, options) {
     try {
         let dirname = getPath(path);
+
         if (checkExistsFile(dirname)) {
             let files = getFiles(dirname);
 
@@ -69,34 +70,48 @@ const executionJob = async function(browser, path, options) {
                 let filesMap = await getCheckedFiles(files, undefined);
 
                 if (filesMap && filesMap.length > 0) {
-                    if (options.report && checkExistsFile(getPath(options.report))) {
-                        if (options.data) {
-                            let dataMap = options.data.split(',').map(el => {
-                                return {
-                                    name: el.split('/').pop(),
-                                    dirname: getPath(el)
-                                };
-                            });
+                    if (options.report && typeof options.report === 'string' && checkExistsFile(getPath(options.report))) {
+                        if (options.data && typeof options.data === 'string') {
+                            let dataMap = [];
+                            if (options.data.includes(',')) {
+                                dataMap = options.data.split(',').map(el => {
+                                    return {
+                                        name: el.split('/').pop(),
+                                        dirname: getPath(el)
+                                    };
+                                });
+                            } else {
+                                let dataFiles = getFiles(getPath(options.data));
+                                if (dataFiles && dataFiles.length > 0) {
+                                    dataMap = getDataFiles(dataFiles);
+                                }
+                            }
 
-                            if (dataMap.every(el => checkExistsFile(el.dirname)) == true) {
+                            if (dataMap.length > 0 && dataMap.every(el => checkExistsFile(el.dirname)) == true) {
                                 let finalFiles = await getCheckedFiles(filesMap, dataMap);
 
                                 if (finalFiles && finalFiles.length > 0) {
-                                    return openBrowser(browser)
-                                        .then((driver) => socketExecution(driver, finalFiles, dataMap, getPath(options.report), true));
+                                    let driver = await openBrowser(browser);
+                                    if (driver) {
+                                        socketExecution(driver, finalFiles, dataMap, getPath(options.report), true)
+                                    }
                                 } else {
                                     log("The files is not valid. Please try again!", true);
                                 }
+                            } else {
+                                log("The files is not valid. Please try again!", true);
                             }
                         } else {
-                            return openBrowser(browser)
-                                .then((driver) => socketExecution(driver, filesMap, undefined, getPath(options.report), true));
+                            let driver = await openBrowser(browser);
+                            if (driver) {
+                                socketExecution(driver, filesMap, undefined, getPath(options.report), true)
+                            }
                         }
                     } else {
-                        log("The path of ReportLog is not valid. Please try again!" + getPath(options.report), true);
+                        log("The path of report is not valid. Please try again!", true);
                     }
                 } else {
-                    log(`The execution target must be a HTML file or a folder that contains at least one HTML file.`, true);
+                    log("The path is not valid. Please try again!", true);
                 }
             } else {
                 log("The path is not valid. Please try again!", true);
@@ -137,7 +152,7 @@ const executionDevJob = async function(browser, options) {
                             .then((driver) => socketExecution(driver, filesMap, undefined, undefined, options.logger ? options.logger : false));
                     }
                 } else {
-                    log(`The execution target must be a HTML file or a folder that contains at least one HTML file.`, true);
+                    log("The path is not valid. Please try again!", true);
                 }
             } else {
                 log("The path is not valid. Please try again!", true);

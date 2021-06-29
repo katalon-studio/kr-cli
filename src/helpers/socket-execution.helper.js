@@ -34,6 +34,7 @@ const socketExecution = async(driver, files, datafiles, reportDir, verbose) => {
     let reportMap = [];
     let reportResult = [];
     let reportPath = reportDir ? `${reportDir}/${new Date().getTime()}` : undefined;
+
     let index = 0;
 
     function sendHTML(socket, doneTestCase, ind) {
@@ -106,6 +107,9 @@ const socketExecution = async(driver, files, datafiles, reportDir, verbose) => {
 
         //info testsuite and testcases
         socket.on("infoTestSuite", (data) => {
+            if (verbose) {
+                logger(reportPath).verbose(`Found test suite: ${data.testSuite}`);
+            }
             reportMap.push({
                 ...data,
                 numOfTestcases: data.testCases.length,

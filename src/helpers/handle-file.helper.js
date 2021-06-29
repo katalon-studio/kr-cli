@@ -36,7 +36,7 @@ const getPath = function(path) {
             let pathMap = path.split('/') || path.split('\\');
             let intersection = pathMap.filter(x => dirnameMap.includes(x));
             if (intersection.length < 2) {
-                return pathLib.resolve(`./${path}`)
+                return pathLib.resolve(`./${path}`);
             } else {
                 return path;
             }
@@ -122,11 +122,17 @@ const convertHTMLtoJSON = (path) => {
 const checkDataFilesinHTML = (path, datafiles) => {
     try {
         const stringFile = fs.readFileSync(path, { encoding: 'utf8' }).toString();
-        if (stringFile && datafiles.some(el => new RegExp(`${el.name}`, 'g').test(stringFile)) == true) {
-            return true;
-        } else {
-            log(`Some data files needed by the tests with path ${path} are missing. If your tests don't use data files, don't use parameter "data". `, true);
-            return false;
+        if (stringFile) {
+            if (datafiles && datafiles.length > 0 && datafiles.some(el => new RegExp(`${el.name}`, 'g').test(stringFile)) == true) {
+                return true;
+            } else {
+                if (new RegExp('.csv|.json', 'g').test(stringFile) == true) {
+                    log(`Some data files is found with path ${path}!`, false)
+                } else {
+                    log(`Some data files needed by the tests with path ${path} are missing. If your tests don't use data files, don't use parameter "data". `, true);
+                }
+                return false;
+            }
         }
     } catch (error) {
         log(`Error: ${error}`, true);
