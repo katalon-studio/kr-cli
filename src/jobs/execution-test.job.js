@@ -108,7 +108,7 @@ const executionJob = async function(browser, path, options) {
                             }
                         }
                     } else {
-                        log("The path of report is not valid. Please try again!", true);
+                        log("The path of report is not found or invalid. Please try again with --report or -rp <path>!", true);
                     }
                 } else {
                     log("The path is not valid. Please try again!", true);
