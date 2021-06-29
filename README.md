@@ -64,13 +64,13 @@ If you are a developer, you can integrate KR tests into your development process
 
 ### Executing all test suites in a project
 
-`kr-cli dev <browser> --lg`
+`kr-cli dev <browser> -lg`
 
 1.  Place all KR test suites under folder /tests/kr-test in your NodeJS project.    
 2.  Replace browser with chrome or firefox.     
 3.  Execute the command.
     
-When you run in development mode, by default no report or log files are going to be generated. An overview of the execution will be printed directly to your command-line tool. When `--lg` is specified, the logs will also be printed to your command-line tool as the tests are being executed.
+When you run in development mode, by default no report or log files are going to be generated. An overview of the execution will be printed directly to your command-line tool. When `-lg` or `--log` is specified, the logs will also be printed to your command-line tool as the tests are being executed.
 
 ## License
 
