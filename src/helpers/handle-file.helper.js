@@ -32,7 +32,7 @@ const getFiles = function(path) {
 const getPath = function(path) {
     try {
         if (path) {
-            let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('\\').split('\\');
+            let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('\\').toLocaleLowerCase().split('\\');
             let pathMap = path.split('/') || path.split('\\');
             let intersection = pathMap.filter(x => dirnameMap.includes(x));
             if (intersection.length < 2) {
