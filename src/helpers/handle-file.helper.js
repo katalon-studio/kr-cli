@@ -32,8 +32,9 @@ const getFiles = function(path) {
 const getPath = function(path) {
     try {
         if (path) {
-            let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('\\').toLocaleLowerCase().split('\\');
-            let pathMap = path.split('/') || path.split('\\');
+            let checkOS = new RegExp("/", "g");
+            let dirnameMap = checkOS.test(pathLib.resolve("./")) ? pathLib.resolve("./").toLowerCase().split("/") : pathLib.resolve(".\\").toLowerCase().split("\\");
+            let pathMap = checkOS.test(pathLib.resolve("./")) ? path.toLowerCase().split("/") : path.toLowerCase().split("\\");
             let intersection = pathMap.filter(x => dirnameMap.includes(x));
             if (intersection.length < 2) {
                 return pathLib.resolve(`./${path}`);
