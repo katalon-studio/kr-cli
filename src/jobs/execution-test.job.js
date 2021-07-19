@@ -46,10 +46,17 @@ function getDataFiles(files) {
         let filesMap = files.map(e => {
             let formatting = e.split('.').pop().toLowerCase();
             if (formatting === "json" || formatting === "csv") {
-                return {
-                    name: e.split('/').pop(),
-                    dirname: getPath(e)
-                };
+                if (new RegExp("/", "g").test(e)) {
+                    return {
+                        name: e.split('/').pop(),
+                        dirname: getPath(e)
+                    };
+                } else {
+                    return {
+                        name: e.split('\\').pop(),
+                        dirname: getPath(e)
+                    };
+                }
             }
         }).filter(el => el != undefined)
         return filesMap;
@@ -75,10 +82,17 @@ const executionJob = async function(browser, path, options) {
                             let dataMap = [];
                             if (options.data.includes(',')) {
                                 dataMap = options.data.split(',').map(el => {
-                                    return {
-                                        name: el.split('/').pop(),
-                                        dirname: getPath(el)
-                                    };
+                                    if (new RegExp("/", "g").test(el)) {
+                                        return {
+                                            name: el.split('/').pop(),
+                                            dirname: getPath(el)
+                                        };
+                                    } else {
+                                        return {
+                                            name: el.split('\\').pop(),
+                                            dirname: getPath(el)
+                                        };
+                                    }
                                 });
                             } else {
                                 let dataFiles = getFiles(getPath(options.data));
