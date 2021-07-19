@@ -6,8 +6,9 @@ const path = require('path');
 global.appRoot = path.resolve(__dirname);
 
 const { version } = require('../package.json');
+console.log(version)
 
-program.version(version).description('Hello I am Katalon Recorder CLI')
+program.version(version, '-v, --vers', 'output the current version').description('Hello I am Katalon Recorder CLI')
 
 program
     .command('run <browser> [path]')
