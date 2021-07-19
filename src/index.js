@@ -5,7 +5,9 @@ const { executionTestController, executionTestDevController } = require("./contr
 const path = require('path');
 global.appRoot = path.resolve(__dirname);
 
-program.version('1.0.0').description('Hello I am Katalon Recorder CLI')
+const { version } = require('../package.json');
+
+program.version(version).description('Hello I am Katalon Recorder CLI')
 
 program
     .command('run <browser> [path]')

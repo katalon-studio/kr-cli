@@ -36,7 +36,7 @@ const getPath = function(path) {
             let dirnameMap = checkOS.test(pathLib.resolve("./")) ? pathLib.resolve("./").toLowerCase().split("/") : pathLib.resolve(".\\").toLowerCase().split("\\");
             let pathMap = checkOS.test(pathLib.resolve("./")) ? path.toLowerCase().split("/") : path.toLowerCase().split("\\");
             let intersection = pathMap.filter(x => dirnameMap.includes(x));
-            if (intersection.length < 2) {
+            if (intersection.length > 2) {
                 return pathLib.resolve(`./${path}`);
             } else {
                 return path;
