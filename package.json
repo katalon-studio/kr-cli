@@ -18,7 +18,7 @@
         "console-table-printer": "^2.9.0",
         "csv-stringify": "^5.6.2",
         "express": "^4.17.1",
-        "geckodriver": "^2.0.0",
+        "geckodriver": "^2.0.1",
         "himalaya": "^1.1.0",
         "selenium-webdriver": "^4.0.0-beta.4",
         "socket.io": "^4.1.2",
