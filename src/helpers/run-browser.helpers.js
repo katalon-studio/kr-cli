@@ -1,48 +1,59 @@
 const webdriver = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
 const firefox = require('selenium-webdriver/firefox');
+const puppeteer = require('puppeteer');
 
-function encode(file) {
-    const dirname = appRoot.split('src')[0];
-    const stream = require('fs').readFileSync(dirname + file);
-    return Buffer.from(stream).toString('base64');
-}
+const extensionPath = "/Users/tra.nguyen/Katalon-project/katalon-recorder-private/src";
 
-const openBrowser = async(browser) => {
-    require('chromedriver');
-    require('geckodriver');
-    const driver = await new webdriver.Builder()
-        .forBrowser(browser);
+const openBrowser = async (browser) => {
     switch (browser) {
         case 'chrome':
             {
-                const options = new chrome.Options();
-                options.addArguments("disable-infobars");
-                options.addArguments("start-maximized");
-                options.addArguments("--enable-automation");
-                options.addExtensions(encode("katalon-recorder/kr-chrome.crx"));
-
-                driver.withCapabilities(webdriver.Capabilities.chrome())
-                .setChromeOptions(options);
-
-                break;
+                return await puppeteer.launch({
+                    headless: false,
+                    // Chrome options
+                    executablePath: process.env.PUPPETEER_EXEC_PATH,
+                    args: [
+                        `--no-sandbox`,
+                        '--disable-setuid-sandbox',
+                        `--load-extension=${extensionPath}`,
+                        `--disable-extensions-except=${extensionPath}`,
+                        `--window-size=870,740`
+                    ],
+                });
+            }
+        case 'edge':
+            {
+                return await puppeteer.launch({
+                    headless: false,
+                    // Chrome options
+                    executablePath: process.env.PUPPETEER_EXEC_PATH,
+                    args: [
+                        `--no-sandbox`,
+                        '--disable-setuid-sandbox',
+                        `--load-extension=${extensionPath}`,
+                        `--disable-extensions-except=${extensionPath}`,
+                        `--window-size=${browserSize.width},${browserSize.height}`
+                    ],
+                });
             }
         case 'firefox':
             {
+                require('geckodriver');
+                const driver = await new webdriver.Builder()
+                    .forBrowser(browser);
                 const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-firefox.xpi";
                 const options = new firefox.Options();
                 options.addExtensions(dirname);
                 options.setPreference("marionette.enabled", true);
 
-                driver.setFirefoxOptions(options);
-                break;
+                return driver.setFirefoxOptions(options).build().then(d => {
+                    return d;
+                });
             }
         default:
             break;
     }
-    return driver.build().then(d => {
-        return d;
-    });
+    
 };
 
 module.exports = {

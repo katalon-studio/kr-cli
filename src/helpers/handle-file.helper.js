@@ -2,7 +2,7 @@ const fs = require('fs');
 const { parse } = require('himalaya');
 const pathLib = require('path');
 
-const log = function(content, isError) {
+const log = function (content, isError) {
     if (!isError) {
         return console.log(`>> [INFO] Message: ${content}`);
     } else {
@@ -10,7 +10,7 @@ const log = function(content, isError) {
     }
 }
 
-const getFiles = function(path) {
+const getFiles = function (path) {
     try {
         let stats = fs.statSync(path);
 
@@ -29,15 +29,19 @@ const getFiles = function(path) {
     }
 }
 
-const getPath = function(path) {
+const getPath = function (path) {
     try {
-        let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('./').split('\\');
-        let pathMap = path.split('/') || path.split('\\');
-        let intersection = pathMap.filter(x => dirnameMap.includes(x));
-        if (intersection.length < 2) {
-            return pathLib.resolve(`./${path}`)
+        if (path && path != true) {
+            let dirnameMap = pathLib.resolve('./').split('/') || pathLib.resolve('./').split('\\');
+            let pathMap = path.split('/') || path.split('\\');
+            let intersection = pathMap.filter(x => dirnameMap.includes(x));
+            if (intersection.length < 2) {
+                return pathLib.resolve(`./${path}`)
+            } else {
+                return path;
+            }
         } else {
-            return path;
+            return undefined;
         }
     } catch (error) {
         log(`Error: ${error}`, true);
@@ -45,9 +49,9 @@ const getPath = function(path) {
     }
 }
 
-const checkExistsFile = function(path) {
+const checkExistsFile = function (path) {
     try {
-        if (fs.existsSync(path)) {
+        if (path && fs.existsSync(path)) {
             return true;
         } else {
             log(`The path doesn't exists. ${path}`, true);
@@ -59,10 +63,10 @@ const checkExistsFile = function(path) {
     }
 }
 
-const checkFormatedFile = function(path) {
+const checkFormatedFile = function (path) {
     try {
         let formatting = path.split('.').pop().toLowerCase();
-        if (formatting === "html") {
+        if (formatting === "html" || formatting === "krecorder") {
             return true;
         } else {
             return false;
@@ -73,7 +77,7 @@ const checkFormatedFile = function(path) {
     }
 }
 
-const checkKRformatedFile = function(path) {
+const checkKRformatedFile = function (path) {
     try {
         const KRHtml = convertHTMLtoJSON(path);
         if (KRHtml) {

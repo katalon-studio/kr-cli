@@ -13,15 +13,15 @@
         "kr-cli": "src/index.js"
     },
     "dependencies": {
-        "chromedriver": "^90.0.1",
-        "commander": "^7.2.0",
-        "console-table-printer": "^2.9.0",
-        "csv-stringify": "^5.6.2",
-        "express": "^4.17.1",
-        "geckodriver": "^2.0.0",
+        "commander": "^9.2.0",
+        "console-table-printer": "^2.11.0",
+        "csv-stringify": "^6.0.5",
+        "express": "^4.18.1",
+        "geckodriver": "^3.0.1",
         "himalaya": "^1.1.0",
-        "selenium-webdriver": "^4.0.0-beta.3",
-        "socket.io": "^4.1.2",
-        "winston": "^3.3.3"
+        "puppeteer": "^14.1.0",
+        "selenium-webdriver": "^4.1.2",
+        "websocket": "^1.0.34",
+        "winston": "^3.7.2"
     }
 }

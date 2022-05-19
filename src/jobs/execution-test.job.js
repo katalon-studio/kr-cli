@@ -59,7 +59,7 @@ function getDataFiles(files) {
     }
 }
 
-const executionJob = async function(browser, path, options) {
+const executionJob = async function (browser, path, options) {
     try {
         let dirname = getPath(path);
         if (checkExistsFile(dirname)) {
@@ -69,6 +69,7 @@ const executionJob = async function(browser, path, options) {
                 let filesMap = await getCheckedFiles(files, undefined);
 
                 if (filesMap && filesMap.length > 0) {
+
                     if (options.report && checkExistsFile(getPath(options.report))) {
                         if (options.data) {
                             let dataMap = options.data.split(',').map(el => {
@@ -111,7 +112,7 @@ const executionJob = async function(browser, path, options) {
     }
 }
 
-const executionDevJob = async function(browser, options) {
+const executionDevJob = async function (browser, options) {
     try {
         let dirname = getPath(pathLib.resolve('./tests/kr-test'));
         if (checkExistsFile(dirname)) {
@@ -134,7 +135,7 @@ const executionDevJob = async function(browser, options) {
                         }
                     } else {
                         return openBrowser(browser)
-                            .then((driver) => socketExecution(driver, filesMap, undefined, undefined, options.logger ? options.logger : false));
+                            .then((driver) => socketExecution({ driver, browser }, filesMap, undefined, undefined, options.logger ? options.logger : false));
                     }
                 } else {
                     log(`The execution target must be a HTML file or a folder that contains at least one HTML file.`, true);
@@ -147,7 +148,7 @@ const executionDevJob = async function(browser, options) {
         }
 
     } catch (error) {
-        log(`Error: ${ error }`, true);
+        log(`Error: ${error}`, true);
         throw error;
     }
 }
