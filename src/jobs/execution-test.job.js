@@ -84,14 +84,14 @@ const executionJob = async function (browser, path, options) {
 
                                 if (finalFiles && finalFiles.length > 0) {
                                     return openBrowser(browser)
-                                        .then((driver) => socketExecution(driver, finalFiles, dataMap, getPath(options.report), true));
+                                        .then((driver) => socketExecution({ driver, browser }, finalFiles, dataMap, getPath(options.report), true));
                                 } else {
                                     log("The files is not valid. Please try again!", true);
                                 }
                             }
                         } else {
                             return openBrowser(browser)
-                                .then((driver) => socketExecution(driver, filesMap, undefined, getPath(options.report), true));
+                                .then((driver) => socketExecution({ driver, browser }, filesMap, undefined, getPath(options.report), true));
                         }
                     } else {
                         log("The path of ReportLog is not valid. Please try again!" + getPath(options.report), true);
@@ -129,7 +129,7 @@ const executionDevJob = async function (browser, options) {
 
                         if (finalFiles && finalFiles.length > 0) {
                             return openBrowser(browser)
-                                .then((driver) => socketExecution(driver, finalFiles, dataMap, undefined, options.logger ? options.logger : false));
+                                .then((driver) => socketExecution({ driver, browser }, finalFiles, dataMap, undefined, options.logger ? options.logger : false));
                         } else {
                             log("The files is not valid. Please try again!", true);
                         }

@@ -19,7 +19,9 @@ wsServer = new WebSocketServer({
     httpServer: server
 });
 
-const socketExecution = async (driver, files, datafiles, reportDir, verbose) => {
+const socketExecution = async (browserInfo, files, datafiles, reportDir, verbose) => {
+    let socketConnection = null;
+
     const fileContents = await files.map(el => {
         let rs = {
             content: fs.readFileSync(el.path, { encoding: 'utf8' }).toString(),
@@ -43,7 +45,7 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
     let reportPath = reportDir ? `${reportDir}/${new Date().getTime()}` : undefined;
     let index = 0;
 
-    function sendHTML(socket, doneTestCase, ind) {
+    function sendHTML(doneTestCase, ind) {
         //send TestSuite 
         if (ind == 0) {
             doneTestCase = true;
@@ -56,19 +58,23 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
             if (fileContents[ind].hasData) {
                 sentData.datafiles = datafiles;
             }
-            socket.sendUTF(JSON.stringify(sentData));
+            socketConnection.sendUTF(JSON.stringify(sentData));
             doneTestCase = false;
         }
     }
 
     function printTableResult(arr, prop) {
-        const p = new Table();
+        const p = new Table({
+            columns: [
+                { name: 'testsuite', title: 'Test Suite' }, // with alignment and color
+                { name: 'testcase', title: 'Test Case' },
+                { name: 'status', title: 'Status' }, // with Title as separate Text
+            ]
+        });
         arr.forEach(el => {
             if (el[prop] === 'passed') {
-                el[prop] = el[prop].toUpperCase();
                 p.addRow({ ...el }, { color: 'green' });
             } else {
-                el[prop] = el[prop].toUpperCase();
                 p.addRow({ ...el }, { color: 'red' });
             }
         });
@@ -76,7 +82,7 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
         p.printTable();
     }
 
-    function loggerState(data) {
+    function loggerState(data, socket) {
         if (data.type) {
             switch (data.type) {
                 case 'error':
@@ -96,7 +102,11 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
                     }
                 default:
                     {
-                        logger(reportPath).info(data.mess)
+                        logger(reportPath).info(data.mess);
+                        if (data.mess.includes("Finnish executing")) {
+                            //check done current test suite to continue next test suite
+                            checkDoneTestSuite(socket);
+                        }
                         break;
                     }
             }
@@ -104,22 +114,20 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
     }
 
     function logTestSuite(data) {
-        if (data.testSuite && reportMap.length <= fileContents.length) {
+        if (data.testSuite && reportMap.length < fileContents.length) {
             reportMap.push({
                 id: index,
                 ...data,
                 numOfTestcases: data.testCases.length,
                 executedAt: new Date()
             });
-            console.log(reportMap)
         }
     }
 
-    function checkDoneTestSuite(data) {
+    function checkDoneTestSuite() {
         index++;
-        console.log(fileContents.length)
         if (index <= fileContents.length - 1) {
-            sendHTML(socket, true, index);
+            sendHTML(true, index);
         }
 
         setTimeout(async () => {
@@ -130,27 +138,34 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
 
             if (reportResult.length === numbOfAllTests) {
                 if (verbose) {
+                    reportResult.unshift({
+                        testsuite: 'Test Suite',
+                        testcase: 'Test Case',
+                        status: 'Status'
+                    })
                     const output = stringify(reportResult);
                     if (output) {
                         if (reportDir) {
                             fs.writeFileSync(`${reportPath}/kr_execution.csv`, output.toString());
                         } else {
-                            printTableResult(reportResult, 'Status');
+                            reportResult.shift();
+                            printTableResult(reportResult, "status");
                         }
-                        if (driver.browser == "firefox") {
-                            await driver.quit();
+
+                        if (browserInfo.browser == "firefox") {
+                            await browserInfo.driver.quit();
                         } else {
-                            driver.close();
+                            await browserInfo.driver.close();
                         }
 
                         process.exit();
                     }
                 } else {
-                    printTableResult(reportResult, 'Status');
-                    if (driver.browser == "firefox") {
-                        await driver.quit();
+                    printTableResult(reportResult, 'status');
+                    if (browserInfo.browser == "firefox") {
+                        await browserInfo.driver.quit();
                     } else {
-                        driver.close();
+                        await browserInfo.driver.close();
                     }
                     process.exit();
                 }
@@ -159,13 +174,13 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
     }
 
     async function showResultOfTestSuite(data) {
-        if (reportMap[index]) {
+        if (data.result && reportMap[index]) {
             await reportMap[index].testCases.forEach(e => {
                 if (e === data.testcase) {
                     reportResult.push({
-                        'Test Suite': reportMap[index].testSuite,
-                        'Test Case': e,
-                        'Status': data.result
+                        testsuite: reportMap[index].testSuite,
+                        testcase: e,
+                        status: data.result
                     });
                 }
             })
@@ -174,8 +189,9 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
 
     wsServer.on('request', function (request) {
         const socket = request.accept(null, request.origin);
+        socketConnection = socket;
 
-        sendHTML(socket, true, 0);
+        sendHTML(true, 0);
 
         socket.on('message', function (message) {
             if (message.type === 'utf8') {
@@ -188,16 +204,9 @@ const socketExecution = async (driver, files, datafiles, reportDir, verbose) => 
                 //start to log info of test suite
                 logTestSuite(data);
 
-                //check to next test case 
-                checkDoneTestSuite(data);
-
                 //show result of test suite
                 showResultOfTestSuite(data);
             }
-        });
-
-        socket.on('close', function (connection) {
-            // close user connection
         });
     });
 }

@@ -21,7 +21,7 @@ module.exports = (dirname) => {
             silly: 6
         },
         format: winston.format.combine(
-            winston.format.splat(),
+            winston.format.json(),
             winston.format.timestamp({
                 format: 'YYYY-MM-DD HH:mm:ss'
             }),
