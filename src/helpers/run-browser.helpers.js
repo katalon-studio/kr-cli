@@ -23,18 +23,18 @@ const openBrowser = async (browser) => {
             }
         case 'edge':
             {
-                return await puppeteer.launch({
-                    headless: false,
-                    // Chrome options
-                    executablePath: process.env.PUPPETEER_EXEC_PATH,
-                    args: [
-                        `--no-sandbox`,
-                        '--disable-setuid-sandbox',
-                        `--load-extension=${extensionPath}`,
-                        `--disable-extensions-except=${extensionPath}`,
-                        `--window-size=${browserSize.width},${browserSize.height}`
-                    ],
-                });
+                // return await puppeteer.launch({
+                //     headless: false,
+                //     // Chrome options
+                //     executablePath: process.env.PUPPETEER_EXEC_PATH,
+                //     args: [
+                //         `--no-sandbox`,
+                //         '--disable-setuid-sandbox',
+                //         `--load-extension=${extensionPath}`,
+                //         `--disable-extensions-except=${extensionPath}`,
+                //         `--window-size=${browserSize.width},${browserSize.height}`
+                //     ],
+                // });
             }
         case 'firefox':
             {
