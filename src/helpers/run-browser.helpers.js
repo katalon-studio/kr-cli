@@ -1,59 +1,60 @@
 const webdriver = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 const firefox = require('selenium-webdriver/firefox');
-const puppeteer = require('puppeteer');
-
-const extensionPath = "/Users/tra.nguyen/Katalon-project/katalon-recorder-private/src";
+// const edge = require('selenium-webdriver/edge');
 
 const openBrowser = async (browser) => {
+    require('chromedriver');
+    require('geckodriver');
+    // require('edgedriver');
+    const driver = await new webdriver.Builder()
+        .forBrowser(browser);
     switch (browser) {
         case 'chrome':
             {
-                return await puppeteer.launch({
-                    headless: false,
-                    // Chrome options
-                    executablePath: process.env.PUPPETEER_EXEC_PATH,
-                    args: [
-                        `--no-sandbox`,
-                        '--disable-setuid-sandbox',
-                        `--load-extension=${extensionPath}`,
-                        `--disable-extensions-except=${extensionPath}`,
-                        `--window-size=870,740`
-                    ],
-                });
+                const options = new chrome.Options();
+                options.addArguments("disable-infobars");
+                options.addArguments("start-maximized");
+                options.addArguments("--enable-automation");
+                const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-chrome.crx";
+                options.addExtensions(dirname);
+
+                driver.withCapabilities(webdriver.Capabilities.chrome())
+                    .setChromeOptions(options);
+
+                break;
             }
-        case 'edge':
-            {
-                // return await puppeteer.launch({
-                //     headless: false,
-                //     // Chrome options
-                //     executablePath: process.env.PUPPETEER_EXEC_PATH,
-                //     args: [
-                //         `--no-sandbox`,
-                //         '--disable-setuid-sandbox',
-                //         `--load-extension=${extensionPath}`,
-                //         `--disable-extensions-except=${extensionPath}`,
-                //         `--window-size=${browserSize.width},${browserSize.height}`
-                //     ],
-                // });
-            }
+        // case 'edge':
+        //     {
+        //         const options = new edge.Options();
+        //         options.addArguments("disable-infobars");
+        //         options.addArguments("start-maximized");
+        //         options.addArguments("--enable-automation");
+        //         // const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-chrome.crx";
+        //         // options.addExtensions(dirname);
+
+        //         driver.withCapabilities(webdriver.Capabilities.edge())
+        //             .setEdgeOptions(options);
+
+        //         break;
+        //     }
         case 'firefox':
             {
-                require('geckodriver');
-                const driver = await new webdriver.Builder()
-                    .forBrowser(browser);
                 const dirname = appRoot.split('src')[0] + "katalon-recorder/kr-firefox.xpi";
+                console.log(dirname)
                 const options = new firefox.Options();
                 options.addExtensions(dirname);
                 options.setPreference("marionette.enabled", true);
 
-                return driver.setFirefoxOptions(options).build().then(d => {
-                    return d;
-                });
+                driver.setFirefoxOptions(options);
+                break;
             }
         default:
             break;
     }
-    
+    return driver.build().then(d => {
+        return d;
+    });
 };
 
 module.exports = {

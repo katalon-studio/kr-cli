@@ -15,9 +15,11 @@
         "kr-cli": "src/index.js"
     },
     "dependencies": {
+        "chromedriver": "^101.0.0",
         "commander": "^9.2.0",
         "console-table-printer": "^2.11.0",
         "csv-stringify": "^6.0.5",
+        "edgedriver": "^4.17134.1",
         "express": "^4.18.1",
         "geckodriver": "^3.0.1",
         "himalaya": "^1.1.0",
