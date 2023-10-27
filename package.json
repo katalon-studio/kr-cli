@@ -13,7 +13,7 @@
         "kr-cli": "src/index.js"
     },
     "dependencies": {
-        "chromedriver": "^90.0.1",
+        "chromedriver": "^107.0.2",
         "commander": "^7.2.0",
         "console-table-printer": "^2.9.0",
         "csv-stringify": "^5.6.2",
